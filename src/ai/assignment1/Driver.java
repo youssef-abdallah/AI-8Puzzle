@@ -7,6 +7,9 @@ public class Driver {
 		int[][] grid = parseInput(args);
 		DFSSolver dfsSolver = new DFSSolver();
 		dfsSolver.solve(grid);
+		
+		AStarSolver aStarSolver = new AStarSolver();
+		aStarSolver.solve(grid);
 	}
 	
 	private static int[][] parseInput(String[] args) {
