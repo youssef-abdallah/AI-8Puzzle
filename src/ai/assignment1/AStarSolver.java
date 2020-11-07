@@ -2,9 +2,6 @@ package ai.assignment1;
 import java.awt.Point;
 import java.lang.Math;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AStarSolver implements Solver{
 	
@@ -38,6 +35,18 @@ public class AStarSolver implements Solver{
 		return distance;
 	}
 	 
+	 private static int getEuclideanDistance(int[][] board) {
+			int distance = 0;
+			for(int i = 0; i < 3; i++) {
+				for(int j = 0; j < 3; j++) {
+					if(board[i][j] != 0) {
+						distance += Math.sqrt(Math.pow(Math.abs(i - board[i][j] / 3), 2) + Math.pow(Math.abs(j - board[i][j] % 3), 2));
+					}
+				}
+			}
+			return distance;
+		}
+	 
 	 private static Point getBlankLocation() {
 		 for(int i = 0; i < 3; i++) {
 			 for(int j = 0; j < 3; j++) {
@@ -56,10 +65,10 @@ public class AStarSolver implements Solver{
 		 return false;
 	 }
 	 
-	 private static void printGrid() {
+	 private static void printGrid(int[][] board) {
 		 for(int i = 0; i < 3; i++) {
 				for(int j = 0; j < 3; j++) {
-					System.out.print(grid[i][j]);
+					System.out.print(board[i][j]);
 				}
 				System.out.println();
 			}
@@ -109,22 +118,27 @@ public class AStarSolver implements Solver{
 	
 	@Override
 	public void solve(int[][] board) {
+		solveWithManhattanDistance(board);
+		solveWithEuclideanDistance(board);
+	}
+	
+	private static void solveWithManhattanDistance(int[][] board) {
 		int[] dr = {0, 0, 1, -1};
 		int[] dc = {1, -1, 0, 0};
 		HashSet<Integer> explored = new HashSet<Integer>();
 		PriorityQueue<qEntry> pQueue = new PriorityQueue<>();
 		
 		grid = board;
-		pQueue.add(new qEntry(grid, getManhattanDistance(grid)));
-		
+		pQueue.add(new qEntry(grid, getManhattanDistance(grid), null));
 		
 		while(!pQueue.isEmpty()) {
-			grid = pQueue.poll().board;
-			printGrid();
+			qEntry current = pQueue.poll();
+			grid = current.board;
 			addToExplored(explored);
 			
 			if(isGoalState()) {
-				System.out.println("Success");
+				int steps = traceSolution(current);
+				System.out.println("Success using Manhattan distance in: " + steps + " steps.");
 				success = true;
 				break;
 			}
@@ -136,16 +150,69 @@ public class AStarSolver implements Solver{
 				if(checkValidMove(newBlank.x, newBlank.y)) {
 					int[][] newGrid = getNewGrid(blankLocation, newBlank);
 					if(!wasExplored(explored, newGrid)) {
-						pQueue.add(new qEntry(newGrid, getManhattanDistance(newGrid)));
+						pQueue.add(new qEntry(newGrid, getManhattanDistance(newGrid), current));
 					}
 				}
 			}
 			
 		}
 		if(!success) {
-			System.out.println("Failed to get a solution");
+			System.out.println("Failed to get a solution using Manhattan distance");
 		}
+	}
+	
+	private static int traceSolution(qEntry entry) {
+		int steps = 0;
+		Stack<int[][]> stack = new Stack<>();
+		stack.add(entry.board);
+		while(entry.parent != null) {
+			steps++;
+			entry = entry.parent;
+			stack.add(entry.board);
+		}
+		while(!stack.isEmpty()) {
+			printGrid(stack.pop());
+		}
+		return steps;
+	}
+	
+	private static void solveWithEuclideanDistance(int[][] board) {
+		int[] dr = {0, 0, 1, -1};
+		int[] dc = {1, -1, 0, 0};
+		HashSet<Integer> explored = new HashSet<Integer>();
+		PriorityQueue<qEntry> pQueue = new PriorityQueue<>();
 		
+		grid = board;
+		pQueue.add(new qEntry(grid, getEuclideanDistance(grid), null));
+		
+		while(!pQueue.isEmpty()) {
+			qEntry current = pQueue.poll();
+			grid = current.board;
+			addToExplored(explored);
+			
+			if(isGoalState()) {
+				int steps = traceSolution(current);
+				System.out.println("Success using Euclidean distance in: " + steps + " steps.");
+				success = true;
+				break;
+			}
+			Point blankLocation = getBlankLocation();
+			for(int i = 0; i < 4 ; i++) {
+				Point newBlank = new Point();
+				newBlank.x = blankLocation.x + dr[i];
+				newBlank.y = blankLocation.y + dc[i];
+				if(checkValidMove(newBlank.x, newBlank.y)) {
+					int[][] newGrid = getNewGrid(blankLocation, newBlank);
+					if(!wasExplored(explored, newGrid)) {
+						pQueue.add(new qEntry(newGrid, getEuclideanDistance(newGrid), current));
+					}
+				}
+			}
+			
+		}
+		if(!success) {
+			System.out.println("Failed to get a solution using Euclidean distance");
+		}
 	}
 	
 	
@@ -155,10 +222,12 @@ class qEntry implements Comparable<qEntry> {
 
 	int[][] board;
 	int distance;
+	qEntry parent;
 	
-	qEntry(int[][] board, int distance){
+	qEntry(int[][] board, int distance, qEntry parent){
 		this.board = board;
 		this.distance = distance;
+		this.parent = parent;
 	}
 	
 	@Override
