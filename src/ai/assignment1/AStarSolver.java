@@ -2,9 +2,6 @@ package ai.assignment1;
 import java.awt.Point;
 import java.lang.Math;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AStarSolver implements Solver{
 	
@@ -146,6 +143,36 @@ public class AStarSolver implements Solver{
 			System.out.println("Failed to get a solution");
 		}
 		
+	}
+
+	@Override
+	public List<String> getPathToGoal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCostOfPath() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNodesExpanded() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxSearchDepth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getRunningTime() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	
