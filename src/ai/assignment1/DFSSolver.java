@@ -2,6 +2,7 @@ package ai.assignment1;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -128,6 +129,36 @@ public class DFSSolver implements Solver {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<String> getPathToGoal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCostOfPath() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNodesExpanded() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxSearchDepth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getRunningTime() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

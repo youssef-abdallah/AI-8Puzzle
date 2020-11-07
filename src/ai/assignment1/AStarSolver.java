@@ -214,6 +214,36 @@ public class AStarSolver implements Solver{
 			System.out.println("Failed to get a solution using Euclidean distance");
 		}
 	}
+
+	@Override
+	public List<String> getPathToGoal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCostOfPath() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNodesExpanded() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxSearchDepth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getRunningTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 }
