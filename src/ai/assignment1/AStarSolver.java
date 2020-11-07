@@ -161,20 +161,6 @@ public class AStarSolver implements Solver{
 		}
 	}
 	
-	private static int traceSolution(qEntry entry) {
-		int steps = 0;
-		Stack<int[][]> stack = new Stack<>();
-		stack.add(entry.board);
-		while(entry.parent != null) {
-			steps++;
-			entry = entry.parent;
-			stack.add(entry.board);
-		}
-		while(!stack.isEmpty()) {
-			printGrid(stack.pop());
-		}
-		return steps;
-	}
 	
 	private static void solveWithEuclideanDistance(int[][] board) {
 		int[] dr = {0, 0, 1, -1};
@@ -213,6 +199,21 @@ public class AStarSolver implements Solver{
 		if(!success) {
 			System.out.println("Failed to get a solution using Euclidean distance");
 		}
+	}
+	
+	private static int traceSolution(qEntry entry) {
+		int steps = 0;
+		Stack<int[][]> stack = new Stack<>();
+		stack.add(entry.board);
+		while(entry.parent != null) {
+			steps++;
+			entry = entry.parent;
+			stack.add(entry.board);
+		}
+		while(!stack.isEmpty()) {
+			printGrid(stack.pop());
+		}
+		return steps;
 	}
 
 	@Override

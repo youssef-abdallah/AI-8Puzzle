@@ -6,12 +6,12 @@ public class Driver {
 	public static void main(String[] args) {
 		//int[][] grid = parseInput(args);
 		int[][] grid = {{1,0,2},{7,5,4},{8,6,3}};
+		
+		DFSSolver dfsSolver = new DFSSolver();
+		dfsSolver.solve(grid);
+		
 		AStarSolver aStarSolver = new AStarSolver();
 		aStarSolver.solve(grid);
-		//System.out.println(aStarSolver.pQueue);
-		
-		/*DFSSolver dfsSolver = new DFSSolver();
-		dfsSolver.solve(grid);*/
 	}
 	
 	private static int[][] parseInput(String[] args) {
