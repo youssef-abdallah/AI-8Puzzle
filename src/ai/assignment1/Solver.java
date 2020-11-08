@@ -14,4 +14,6 @@ public interface Solver {
 	int getMaxSearchDepth();
 	
 	double getRunningTime();
+	
+	int getSearchDepth();
 }

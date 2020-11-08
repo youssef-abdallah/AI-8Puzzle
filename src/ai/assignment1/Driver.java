@@ -7,9 +7,13 @@ public class Driver {
 		int[][] grid = parseInput(args);
 		DFSSolver dfsSolver = new DFSSolver();
 		dfsSolver.solve(grid);
-		
-		AStarSolver aStarSolver = new AStarSolver();
-		aStarSolver.solve(grid);
+		System.out.println(dfsSolver.getNodesExpanded());
+		System.out.println(dfsSolver.getSearchDepth());
+		System.out.println(dfsSolver.getPathToGoal());
+		System.out.println(dfsSolver.getMaxSearchDepth());
+		System.out.println(dfsSolver.getCostOfPath());
+		//AStarSolver aStarSolver = new AStarSolver();
+		//aStarSolver.solve(grid);
 	}
 	
 	private static int[][] parseInput(String[] args) {

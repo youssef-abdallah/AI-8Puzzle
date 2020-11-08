@@ -174,6 +174,12 @@ public class AStarSolver implements Solver{
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public int getSearchDepth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 }
