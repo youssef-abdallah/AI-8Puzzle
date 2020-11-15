@@ -173,12 +173,12 @@ public class AStarSolverMan implements Solver{
 		}
 		
 		costOfPath = stack.size()-1;
-		while(!stack.isEmpty()) {
+		/*while(!stack.isEmpty()) {
 			printGrid(stack.pop());
 		}
 		for(int i = 0; i < pathToGoal.size(); i++) {
 			System.out.print(pathToGoal.get(i) + " , ");
-		}
+		}*/
 		
 		return steps;
 	}
