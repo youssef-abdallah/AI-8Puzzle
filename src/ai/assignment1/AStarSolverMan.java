@@ -3,10 +3,17 @@ import java.awt.Point;
 import java.lang.Math;
 import java.util.*;
 
-public class AStarSolver implements Solver{
+public class AStarSolverMan implements Solver{
 	
 	private static int[][] grid;
 	private static boolean success = false;
+	
+	private static List<String> pathToGoal = new ArrayList<String>();
+	private static int costOfPath = 0;
+	private static int nodesExpanded = 0;
+	private static int maxDepthSearch = 0;
+	private static double runningTime = 0;
+	
 	
 	private static boolean isGoalState() {
 		int counter = 0;
@@ -34,18 +41,6 @@ public class AStarSolver implements Solver{
 		}
 		return distance;
 	}
-	 
-	 private static int getEuclideanDistance(int[][] board) {
-			int distance = 0;
-			for(int i = 0; i < 3; i++) {
-				for(int j = 0; j < 3; j++) {
-					if(board[i][j] != 0) {
-						distance += Math.sqrt(Math.pow(Math.abs(i - board[i][j] / 3), 2) + Math.pow(Math.abs(j - board[i][j] % 3), 2));
-					}
-				}
-			}
-			return distance;
-		}
 	 
 	 private static Point getBlankLocation() {
 		 for(int i = 0; i < 3; i++) {
@@ -118,27 +113,29 @@ public class AStarSolver implements Solver{
 	
 	@Override
 	public void solve(int[][] board) {
-		solveWithManhattanDistance(board);
-		solveWithEuclideanDistance(board);
-	}
-	
-	private static void solveWithManhattanDistance(int[][] board) {
+		long startTime = System.currentTimeMillis();
 		int[] dr = {0, 0, 1, -1};
 		int[] dc = {1, -1, 0, 0};
+		String[] directions = {"Right", "Left", "Down", "Up"};
 		HashSet<Integer> explored = new HashSet<Integer>();
 		PriorityQueue<qEntry> pQueue = new PriorityQueue<>();
 		
 		grid = board;
-		pQueue.add(new qEntry(grid, getManhattanDistance(grid), null));
+		pQueue.add(new qEntry(grid, getManhattanDistance(grid), 0, null, null, 0));
+		
+		int exploredStates = 0;
 		
 		while(!pQueue.isEmpty()) {
+			exploredStates++;
 			qEntry current = pQueue.poll();
 			grid = current.board;
 			addToExplored(explored);
-			
+			maxDepthSearch = Math.max(maxDepthSearch, current.depth); 
 			if(isGoalState()) {
+				nodesExpanded = exploredStates;
+				long endTime = System.currentTimeMillis();
+				runningTime = endTime - startTime;
 				int steps = traceSolution(current);
-				System.out.println("Success using Manhattan distance in: " + steps + " steps.");
 				success = true;
 				break;
 			}
@@ -150,7 +147,7 @@ public class AStarSolver implements Solver{
 				if(checkValidMove(newBlank.x, newBlank.y)) {
 					int[][] newGrid = getNewGrid(blankLocation, newBlank);
 					if(!wasExplored(explored, newGrid)) {
-						pQueue.add(new qEntry(newGrid, getManhattanDistance(newGrid), current));
+						pQueue.add(new qEntry(newGrid, getManhattanDistance(newGrid) + current.cost, current.cost + 1, current, directions[i], current.depth+1));
 					}
 				}
 			}
@@ -160,46 +157,9 @@ public class AStarSolver implements Solver{
 			System.out.println("Failed to get a solution using Manhattan distance");
 		}
 	}
+
 	
 	
-	private static void solveWithEuclideanDistance(int[][] board) {
-		int[] dr = {0, 0, 1, -1};
-		int[] dc = {1, -1, 0, 0};
-		HashSet<Integer> explored = new HashSet<Integer>();
-		PriorityQueue<qEntry> pQueue = new PriorityQueue<>();
-		
-		grid = board;
-		pQueue.add(new qEntry(grid, getEuclideanDistance(grid), null));
-		
-		while(!pQueue.isEmpty()) {
-			qEntry current = pQueue.poll();
-			grid = current.board;
-			addToExplored(explored);
-			
-			if(isGoalState()) {
-				int steps = traceSolution(current);
-				System.out.println("Success using Euclidean distance in: " + steps + " steps.");
-				success = true;
-				break;
-			}
-			Point blankLocation = getBlankLocation();
-			for(int i = 0; i < 4 ; i++) {
-				Point newBlank = new Point();
-				newBlank.x = blankLocation.x + dr[i];
-				newBlank.y = blankLocation.y + dc[i];
-				if(checkValidMove(newBlank.x, newBlank.y)) {
-					int[][] newGrid = getNewGrid(blankLocation, newBlank);
-					if(!wasExplored(explored, newGrid)) {
-						pQueue.add(new qEntry(newGrid, getEuclideanDistance(newGrid), current));
-					}
-				}
-			}
-			
-		}
-		if(!success) {
-			System.out.println("Failed to get a solution using Euclidean distance");
-		}
-	}
 	
 	private static int traceSolution(qEntry entry) {
 		int steps = 0;
@@ -207,49 +167,50 @@ public class AStarSolver implements Solver{
 		stack.add(entry.board);
 		while(entry.parent != null) {
 			steps++;
+			pathToGoal.add(0, entry.direction);
 			entry = entry.parent;
 			stack.add(entry.board);
 		}
+		
+		costOfPath = stack.size()-1;
 		while(!stack.isEmpty()) {
 			printGrid(stack.pop());
 		}
+		for(int i = 0; i < pathToGoal.size(); i++) {
+			System.out.print(pathToGoal.get(i) + " , ");
+		}
+		
 		return steps;
 	}
 
 	@Override
 	public List<String> getPathToGoal() {
-		// TODO Auto-generated method stub
-		return null;
+		return pathToGoal;
 	}
 
 	@Override
 	public int getCostOfPath() {
-		// TODO Auto-generated method stub
-		return 0;
+		return costOfPath;
 	}
 
 	@Override
 	public int getNodesExpanded() {
-		// TODO Auto-generated method stub
-		return 0;
+		return nodesExpanded;
 	}
 
 	@Override
 	public int getMaxSearchDepth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return maxDepthSearch;
 	}
 
 	@Override
 	public double getRunningTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return runningTime;
 	}
 
 	@Override
 	public int getSearchDepth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return costOfPath;
 	}
 	
 	
@@ -260,11 +221,17 @@ class qEntry implements Comparable<qEntry> {
 	int[][] board;
 	int distance;
 	qEntry parent;
+	int cost;
+	String direction;
+	int depth;
 	
-	qEntry(int[][] board, int distance, qEntry parent){
+	qEntry(int[][] board, int distance, int cost, qEntry parent, String direction, int depth){
 		this.board = board;
 		this.distance = distance;
+		this.cost = cost;
 		this.parent = parent;
+		this.direction = direction;
+		this.depth = depth;
 	}
 	
 	@Override
@@ -273,12 +240,11 @@ class qEntry implements Comparable<qEntry> {
 			return -1;
 		}
 		else if(distance == other.distance) {
-			return 0;
+			return 1;
 		}
 		return 1;
 	}
 	
 }
-
 
 
