@@ -4,17 +4,20 @@ package ai.assignment1;
 public class Driver {
 
 	public static void main(String[] args) {
-		int[][] grid = parseInput(args);
-		// int[][] grid = {{1,0,2},{7,5,4},{8,6,3}};
+		//int[][] grid = parseInput(args);
+		int[][] grid = {{1,2,5},{3,4,0},{6,7,8}};
 		
-		DFSSolver dfsSolver = new DFSSolver();
+		BFSSolver dfsSolver = new BFSSolver();
 		dfsSolver.solve(grid);
-		System.out.println(dfsSolver.getNodesExpanded());
-		System.out.println(dfsSolver.getSearchDepth());
-		System.out.println(dfsSolver.getPathToGoal());
-		System.out.println(dfsSolver.getMaxSearchDepth());
-		System.out.println(dfsSolver.getCostOfPath());
-		//AStarSolver aStarSolver = new AStarSolver();
+		
+		System.out.println("running time in seconds: " + dfsSolver.getRunningTime());
+		System.out.println("No. of nodes expanded:" + dfsSolver.getNodesExpanded());
+		System.out.println("Search depth: " + dfsSolver.getSearchDepth());
+		System.out.println("Path to goal: " + dfsSolver.getPathToGoal());
+		System.out.println("Max search depth: " + dfsSolver.getMaxSearchDepth());
+		System.out.println("Cost of path: " + dfsSolver.getCostOfPath());
+		
+		//AStarSolverEuc aStarSolver = new AStarSolverEuc();
 		//aStarSolver.solve(grid);
 	}
 	

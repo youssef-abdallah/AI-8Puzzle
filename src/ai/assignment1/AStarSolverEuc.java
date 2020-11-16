@@ -13,6 +13,7 @@ public class AStarSolverEuc implements Solver{
 	private static int nodesExpanded = 0;
 	private static int maxDepthSearch = 0;
 	private static double runningTime = 0;
+	private static Printer printer = new Printer();
 	
 	private static boolean isGoalState() {
 		int counter = 0;
@@ -68,6 +69,7 @@ public class AStarSolverEuc implements Solver{
 			}
 		 System.out.println();
 	 }
+	 
 	 private static void addToExplored(Set<Integer> set) {
 			ArrayList<Integer> state = new ArrayList<Integer>();
 			for (int i = 0; i < 3; i++) {
@@ -115,7 +117,7 @@ public class AStarSolverEuc implements Solver{
 			long startTime = System.currentTimeMillis();
 			int[] dr = {0, 0, 1, -1};
 			int[] dc = {1, -1, 0, 0};
-			String[] directions = {"Right", "Left", "Down", "Up"};
+			String[] directions = {"RIGHT", "LEFT", "DOWN", "UP"};
 			HashSet<Integer> explored = new HashSet<Integer>();
 			PriorityQueue<qEntry> pQueue = new PriorityQueue<>();
 			
@@ -133,8 +135,10 @@ public class AStarSolverEuc implements Solver{
 				if(isGoalState()) {
 					nodesExpanded = exploredStates;
 					long endTime = System.currentTimeMillis();
-					runningTime = endTime - startTime;
+					runningTime = (endTime - startTime) / 1000;
 					int steps = traceSolution(current);
+					printer.printResults(getRunningTime(), getNodesExpanded(), getSearchDepth(), getPathToGoal(),
+							getMaxSearchDepth(), getCostOfPath());
 					success = true;
 					break;
 				}
@@ -172,12 +176,22 @@ public class AStarSolverEuc implements Solver{
 			}
 			
 			costOfPath = stack.size()-1;
-			/*while(!stack.isEmpty()) {
-				printGrid(stack.pop());
+			//
+			printer.clearResultsFile();
+			List<int [][]> grids = new ArrayList<int [][]>();
+			while(!stack.isEmpty()) {
+				printGrid(stack.peek());
+				grids.add(stack.pop());
+				
 			}
+			printer.printGridToFileAStar(grids, pathToGoal);
+
+			/*
 			for(int i = 0; i < pathToGoal.size(); i++) {
 				System.out.print(pathToGoal.get(i) + " , ");
-			}*/
+			}
+			*/
+			//
 			
 			return steps;
 		}

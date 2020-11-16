@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 
+
 public class DFSSolver implements Solver {
 	
 	private static int[][] grid;
@@ -13,6 +14,8 @@ public class DFSSolver implements Solver {
 	private static double runtime;
 	private static HashSet<Integer> frontier = new HashSet<>();
 	private static HashSet<Integer> explored = new HashSet<Integer>();
+	
+	private static Printer printer = new Printer();
 	
 	private static boolean testGoalState() {
 		int cnt = 0;
@@ -84,6 +87,8 @@ public class DFSSolver implements Solver {
 
 	@Override
 	public void solve(int[][] board) {
+		printer.clearResultsFile();
+		double startTime = System.currentTimeMillis();
 		int[] dr = {0, 0, 1, -1};
 		int[] dc = {1, -1, 0, 0};
 		Node initial = new Node();
@@ -107,15 +112,18 @@ public class DFSSolver implements Solver {
 			frontier.remove(cur.encodedState);
 			explored.add(cur.encodedState);
 			printBoard();
+			List<Node> nodesToGoal = new ArrayList<Node>();
 			if (testGoalState()) {
 				depthOfSearch = cur.depth;
 				costOfPath = -1;
 				while (cur != null) {
 					costOfPath++;
 					pathToGoal.add(cur.action);
+					nodesToGoal.add(cur);
 					cur = cur.parent;
 				}
 				Collections.reverse(pathToGoal);
+				printer.printGridToFile(nodesToGoal);
 				System.out.println("success");
 				break;
 			}
@@ -139,6 +147,10 @@ public class DFSSolver implements Solver {
 			}
 		}
 		nodesExpanded = explored.size() - 1;
+		double endTime = System.currentTimeMillis();
+		runtime = (endTime - startTime) / 1000;
+		printer.printResults(getRunningTime(), getNodesExpanded(), getSearchDepth(), getPathToGoal(),
+				getMaxSearchDepth(), getCostOfPath());
 	}
 
 	@Override
@@ -166,28 +178,9 @@ public class DFSSolver implements Solver {
 		return runtime;
 	}
 	
-	public static class Node {
-		public int x, y, depth, cost, encodedState;
-		
-		public String action;
-		public Node parent;
-		
-		public Node() {
-			
-		}
-		
-		public Node(int x, int y, int depth, int cost) {
-			this.x = x;
-			this.y = y;
-			this.depth = depth;
-			this.cost = cost;
-			this.parent = null;
-		}
-	}
-
 	@Override
 	public int getSearchDepth() {
 		return depthOfSearch;
 	}
-
+	
 }
